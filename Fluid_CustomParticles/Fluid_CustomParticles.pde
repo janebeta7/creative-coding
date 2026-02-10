@@ -98,7 +98,7 @@ import processing.opengl.PJOGL;
   
   
   int viewport_w = 1920;
-  int viewport_h = 1080;
+  int viewport_h = 1200;
   int viewport_x = 230;
   int viewport_y = 0;
   
