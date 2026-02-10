@@ -70,7 +70,7 @@ void main(){
   // 2) round + evenly shaded 
   // if(length(pc) > 1.0) falloff = 0.0; else falloff = 1.0;
 
-  // Usar la posición de la partícula como coordenadas UV
+  // Use particle position as UV coordinates
   vec2 uv = particle.xy;
   vec3 imageColor = texture(tex_image, uv).rgb;
   

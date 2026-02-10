@@ -80,6 +80,8 @@ static public class MyParticleSystem{
       }
       tex_image = new DwGLTexture();
       tex_image.resize(context, img);
+    } else {
+      System.err.println("ERROR: Failed to load image: " + imagePath);
     }
   }
   
