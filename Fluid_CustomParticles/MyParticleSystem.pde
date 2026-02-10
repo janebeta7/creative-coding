@@ -26,6 +26,7 @@ static public class MyParticleSystem{
   public DwGLSLProgram shader_particleRender;
   
   public DwGLTexture.TexturePingPong tex_particles = new DwGLTexture.TexturePingPong();
+  public DwGLTexture tex_image;
   
   DwPixelFlow context;
   
@@ -66,6 +67,20 @@ static public class MyParticleSystem{
   // OpenGL resources must be released to void memory leaks
   public void release(){
     tex_particles.release();
+    if (tex_image != null) {
+      tex_image.release();
+    }
+  }
+  
+  public void loadImage(String imagePath) {
+    PImage img = context.papplet.loadImage(imagePath);
+    if (img != null) {
+      if (tex_image != null) {
+        tex_image.release();
+      }
+      tex_image = new DwGLTexture();
+      tex_image.resize(context, img);
+    }
   }
   
   public void resize(DwPixelFlow context, int MAX_PARTICLES_WANTED){
@@ -94,6 +109,9 @@ static public class MyParticleSystem{
 
     // allocate texture
     tex_particles.resize(context, GL2ES2.GL_RGBA32F, particles_x, particles_y, GL2ES2.GL_RGBA, GL2ES2.GL_FLOAT, GL2ES2.GL_NEAREST, 4, 4);
+
+    // Load the image texture
+    loadImage("kupka.png");
 
     context.end("ParticleSystem.resize");
  
@@ -199,6 +217,9 @@ static public class MyParticleSystem{
     shader_particleRender.uniform2i     ("num_particles", particles_x, particles_y);
     shader_particleRender.uniform1f     ("point_size"   , point_size);
     shader_particleRender.uniformTexture("tex_particles", tex_particles.src);
+    if (tex_image != null) {
+      shader_particleRender.uniformTexture("tex_image", tex_image);
+    }
     shader_particleRender.drawFullScreenPoints(num_points_to_render);
     shader_particleRender.end();
     context.end("ParticleSystem.render");

@@ -19,6 +19,7 @@ uniform  vec2     wh_viewport;
 uniform ivec2     num_particles;
 uniform float     point_size;
 uniform sampler2D tex_particles;
+uniform sampler2D tex_image;
 
 
 #if SHADER_VERT
@@ -69,13 +70,14 @@ void main(){
   // 2) round + evenly shaded 
   // if(length(pc) > 1.0) falloff = 0.0; else falloff = 1.0;
 
+  // Usar la posición de la partícula como coordenadas UV
+  vec2 uv = particle.xy;
+  vec3 imageColor = texture(tex_image, uv).rgb;
+  
   float len = length(particle.zw) * 0.035;
-float speed = clamp(len, 0.0, 1.0);
-
-// Dorado oscuro → Dorado brillante → Amarillo blanco
-vec3 gold = mix(vec3(0.6, 0.4, 0.1), vec3(1.0, 0.95, 0.6), speed);
-
-glFragColor = vec4(gold, speed * 0.5 + 0.5);
+  float speed = clamp(len, 0.0, 1.0);
+  
+  glFragColor = vec4(imageColor, speed * 0.5 + 0.5);
   glFragColor.a *= falloff;
 }
 
