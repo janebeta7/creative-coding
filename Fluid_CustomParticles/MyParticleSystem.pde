@@ -72,18 +72,24 @@ static public class MyParticleSystem{
     }
   }
   
-  public void loadImage(String imagePath) {
-    PImage img = context.papplet.loadImage(imagePath);
-    if (img != null) {
-      if (tex_image != null) {
-        tex_image.release();
-      }
-      tex_image = new DwGLTexture();
-      tex_image.resize(context, img);
-    } else {
-      System.err.println("ERROR: Failed to load image: " + imagePath);
+public void loadImage(String imagePath) {
+  PImage img = context.papplet.loadImage(imagePath);
+  if (img != null) {
+    if (tex_image != null) {
+      tex_image.release();
     }
+    
+    // Create texture with correct format matching the image
+    tex_image = new DwGLTexture();
+    tex_image.resize(context, GL2ES2.GL_RGBA8, img.width, img.height, GL2ES2.GL_RGBA, GL2ES2.GL_UNSIGNED_BYTE, GL2ES2.GL_LINEAR, 4, 1);
+    
+    // Copy image data to texture using DwFilter
+    com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter.get(context).copy.apply(img, tex_image);
+    
+  } else {
+    System.err.println("ERROR: Failed to load image: " + imagePath);
   }
+}
   
   public void resize(DwPixelFlow context, int MAX_PARTICLES_WANTED){
     particles_x = (int) Math.ceil(Math.sqrt(MAX_PARTICLES_WANTED));
