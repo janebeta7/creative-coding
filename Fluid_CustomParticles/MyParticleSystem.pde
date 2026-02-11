@@ -26,6 +26,8 @@ static public class MyParticleSystem{
   public DwGLSLProgram shader_particleRender;
   
   public DwGLTexture.TexturePingPong tex_particles = new DwGLTexture.TexturePingPong();
+  public DwGLTexture tex_image;
+  public boolean use_image_colors = true;
   
   DwPixelFlow context;
   
@@ -66,7 +68,33 @@ static public class MyParticleSystem{
   // OpenGL resources must be released to void memory leaks
   public void release(){
     tex_particles.release();
+    if (tex_image != null) {
+      tex_image.release();
+    }
   }
+  
+public void loadImage(String imagePath) {
+  PImage img = context.papplet.loadImage(imagePath);
+  if (img != null) {
+    if (tex_image != null) {
+      tex_image.release();
+    }
+    
+    // Create texture with correct format matching the image
+    tex_image = new DwGLTexture();
+    tex_image.resize(context, GL2ES2.GL_RGBA8, img.width, img.height, GL2ES2.GL_RGBA, GL2ES2.GL_UNSIGNED_BYTE, GL2ES2.GL_LINEAR, 4, 1);
+    
+    // Copy image data to texture using DwFilter
+    com.thomasdiewald.pixelflow.java.imageprocessing.filter.DwFilter.get(context).copy.apply(img, tex_image);
+    
+  } else {
+    System.err.println("ERROR: Failed to load image: " + imagePath);
+  }
+}
+
+public void setUseImageColors(boolean use_image) {
+  this.use_image_colors = use_image;
+}
   
   public void resize(DwPixelFlow context, int MAX_PARTICLES_WANTED){
     particles_x = (int) Math.ceil(Math.sqrt(MAX_PARTICLES_WANTED));
@@ -94,6 +122,9 @@ static public class MyParticleSystem{
 
     // allocate texture
     tex_particles.resize(context, GL2ES2.GL_RGBA32F, particles_x, particles_y, GL2ES2.GL_RGBA, GL2ES2.GL_FLOAT, GL2ES2.GL_NEAREST, 4, 4);
+
+    // Load the image texture
+    loadImage("kupka.png");
 
     context.end("ParticleSystem.resize");
  
@@ -199,6 +230,10 @@ static public class MyParticleSystem{
     shader_particleRender.uniform2i     ("num_particles", particles_x, particles_y);
     shader_particleRender.uniform1f     ("point_size"   , point_size);
     shader_particleRender.uniformTexture("tex_particles", tex_particles.src);
+    shader_particleRender.uniform1i("use_image_colors", use_image_colors ? 1 : 0);
+    if (tex_image != null) {
+      shader_particleRender.uniformTexture("tex_image", tex_image);
+    }
     shader_particleRender.drawFullScreenPoints(num_points_to_render);
     shader_particleRender.end();
     context.end("ParticleSystem.render");
