@@ -20,6 +20,7 @@ uniform ivec2     num_particles;
 uniform float     point_size;
 uniform sampler2D tex_particles;
 uniform sampler2D tex_image;
+uniform int use_image_colors;
 
 
 #if SHADER_VERT
@@ -77,7 +78,11 @@ void main(){
   float len = length(particle.zw) * 0.035;
   float speed = clamp(len, 0.0, 1.0);
   
-  glFragColor = vec4(imageColor, speed * 0.5 + 0.5);
+  // Mix between image colors and gold gradient
+  vec3 gold = mix(vec3(0.6, 0.4, 0.1), vec3(1.0, 0.95, 0.6), speed);
+  vec3 finalColor = (use_image_colors == 1) ? imageColor : gold;
+  
+  glFragColor = vec4(finalColor, speed * 0.5 + 0.5);
   glFragColor.a *= falloff;
 }
 

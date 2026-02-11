@@ -125,6 +125,7 @@ import processing.opengl.PJOGL;
   boolean DISPLAY_FLUID_VECTORS      = false;
   int     DISPLAY_fluid_texture_mode = 0;
   boolean DISPLAY_PARTICLES          = true;
+  boolean USE_IMAGE_COLORS = true;  // true = use image, false = use gold gradient
   
   
   public void settings() {
@@ -274,6 +275,11 @@ import processing.opengl.PJOGL;
     DISPLAY_PARTICLES = val != -1;
   }
 
+  public void fluid_displayImageColors(int val){
+    USE_IMAGE_COLORS = val != -1;
+    particles.setUseImageColors(USE_IMAGE_COLORS);
+  }
+
   public void keyReleased(){
     if(key == 'p') fluid_togglePause(); // pause / unpause simulation
     if(key == '+') fluid_resizeUp();    // increase fluid-grid resolution
@@ -360,7 +366,7 @@ import processing.opengl.PJOGL;
     ////////////////////////////////////////////////////////////////////////////
     Group group_display = cp5.addGroup("display");
     {
-      group_display.setHeight(20).setSize(gui_w, 50)
+      group_display.setHeight(20).setSize(gui_w, 80)
       .setBackgroundColor(color(16, 180)).setColorBackground(color(16, 180));
       group_display.getCaptionLabel().align(CENTER, CENTER);
       
@@ -373,6 +379,12 @@ import processing.opengl.PJOGL;
           .setSpacingColumn(2).setSpacingRow(2).setItemsPerRow(1)
           .addItem("display particles", 0)
           .activate(DISPLAY_PARTICLES ? 0 : 2);
+      
+      py += oy;
+      cp5.addRadio("fluid_displayImageColors").setGroup(group_display).setSize(18,18).setPosition(px, py)
+          .setSpacingColumn(2).setSpacingRow(2).setItemsPerRow(1)
+          .addItem("use image colors", 0)
+          .activate(USE_IMAGE_COLORS ? 0 : 2);
     }
     
     

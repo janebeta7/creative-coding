@@ -27,6 +27,7 @@ static public class MyParticleSystem{
   
   public DwGLTexture.TexturePingPong tex_particles = new DwGLTexture.TexturePingPong();
   public DwGLTexture tex_image;
+  public boolean use_image_colors = true;
   
   DwPixelFlow context;
   
@@ -89,6 +90,10 @@ public void loadImage(String imagePath) {
   } else {
     System.err.println("ERROR: Failed to load image: " + imagePath);
   }
+}
+
+public void setUseImageColors(boolean use_image) {
+  this.use_image_colors = use_image;
 }
   
   public void resize(DwPixelFlow context, int MAX_PARTICLES_WANTED){
@@ -225,6 +230,7 @@ public void loadImage(String imagePath) {
     shader_particleRender.uniform2i     ("num_particles", particles_x, particles_y);
     shader_particleRender.uniform1f     ("point_size"   , point_size);
     shader_particleRender.uniformTexture("tex_particles", tex_particles.src);
+    shader_particleRender.uniform1i("use_image_colors", use_image_colors ? 1 : 0);
     if (tex_image != null) {
       shader_particleRender.uniformTexture("tex_image", tex_image);
     }
