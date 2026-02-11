@@ -230,9 +230,9 @@ public void setUseImageColors(boolean use_image) {
     shader_particleRender.uniform2i     ("num_particles", particles_x, particles_y);
     shader_particleRender.uniform1f     ("point_size"   , point_size);
     shader_particleRender.uniformTexture("tex_particles", tex_particles.src);
+    shader_particleRender.uniform1i("use_image_colors", use_image_colors ? 1 : 0);
     if (tex_image != null) {
       shader_particleRender.uniformTexture("tex_image", tex_image);
-      shader_particleRender.uniform1i("use_image_colors", use_image_colors ? 1 : 0);
     }
     shader_particleRender.drawFullScreenPoints(num_points_to_render);
     shader_particleRender.end();
